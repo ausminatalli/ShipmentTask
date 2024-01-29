@@ -4,7 +4,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { TailSpin } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
 import InputField from "../Inputs/InputField";
-import apiClient from "../../Services/apiClient";
+import { forgotPassword, sendResetEmail } from "../../Services/apiQuery";
 
 export default function Forgot() {
   const methods = useForm();
@@ -14,9 +14,9 @@ export default function Forgot() {
   const onSubmit = methods.handleSubmit(async (data) => {
     setisLoading(true);
     try {
-      const response = await apiClient.post("/auth/forgotpassword", data);
+      const response = await forgotPassword(data);
       if (response.statusText === "OK") {
-        const sendEmail = await apiClient.post("/request/reset", response.data);
+        const sendEmail = await sendResetEmail(response.data);
         if (sendEmail.statusText === "OK") {
           navigate("/resetmessage");
         }

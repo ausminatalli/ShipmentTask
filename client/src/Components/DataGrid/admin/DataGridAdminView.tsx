@@ -2,16 +2,22 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 // import { useNavigate } from "react-router-dom";
-import apiClient from "../../../Services/apiClient";
 import { toast } from "react-toastify";
 import AddModel from "../../Model/Model";
 import ImageViewer from "../../Inputs/ImageViewer";
+import { updateShipmentByID } from "../../../Services/apiQuery";
 // import { toast } from "react-toastify";
 interface DataGridViewProps {
   setRequests: any;
   requests: any;
 }
-let statusData = ["Pending", "In Transit", "Delivered", "Cancelled"];
+let statusData = [
+  "Pending",
+  "In Transit",
+  "Out for Delivery",
+  "Delivered",
+  "Cancelled",
+];
 
 const DataGridAdminView: React.FC<DataGridViewProps> = ({
   setRequests,
@@ -103,6 +109,8 @@ const DataGridAdminView: React.FC<DataGridViewProps> = ({
           ? "text-blue-600 font-bold"
           : "" || params.row.status === "In Transit"
           ? "text-yellow-600 font-bold"
+          : "" || params.row.status === "Out for Delivery"
+          ? "text-pink-600 font-bold"
           : "",
       type: "singleSelect",
       editable: true,
@@ -154,9 +162,9 @@ const DataGridAdminView: React.FC<DataGridViewProps> = ({
   //   Navigate(`./${ownerId}`);
   // };
 
-  const handleUpdateStatus = async (id: number, data: any) => {
+  const handleUpdateStatus = async (id: number, data: Shipments) => {
     try {
-      const ChangeStatus = await apiClient.put(`/shipment/${id}`, data);
+      const ChangeStatus = await updateShipmentByID(id, data);
 
       if (ChangeStatus.statusText === "OK") {
         toast.success("Updated Successfully");

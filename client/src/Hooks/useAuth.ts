@@ -1,6 +1,6 @@
 // useAuth.ts
 import { useEffect, useState } from "react";
-import apiClient from "../Services/apiClient";
+import { getSession } from "../Services/apiQuery";
 
 const useAuth = (): { authData: AuthData | null; loading: boolean } => {
   const [authData, setAuthData] = useState<AuthData | null>(null);
@@ -9,7 +9,7 @@ const useAuth = (): { authData: AuthData | null; loading: boolean } => {
     const fetchAuthData = async () => {
       try {
         setLoading(true);
-        const response = await apiClient.get("/auth/session");
+        const response = await getSession();
         setAuthData({
           isAdmin: response.data.isAdmin,
           id: response.data.id,

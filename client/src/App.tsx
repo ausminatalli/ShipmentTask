@@ -14,7 +14,7 @@ import "react-toastify/dist/ReactToastify.css";
 import UserNav from "./Components/Layouts/user/UserNav";
 import ViewShippments from "./Components/UserComponents/Shippments/ViewShipments";
 import ToastProvider from "./utils/ToastProvider";
-import ViewAdminShippments from "./Components/AdminComponents/ViewShippments";
+import ViewAdminShippments from "./Components/AdminComponents/ViewShipments";
 import Track from "./Components/UserComponents/Track/Track";
 import Forgot from "./Components/AuthComponents/Forgot";
 import Verification from "./Components/AuthComponents/Verfication";
@@ -23,7 +23,6 @@ import ViewUsers from "./Components/AdminComponents/ViewUsers";
 import Reset from "./Components/AuthComponents/Reset";
 import ProtectedAdminRoute from "./utils/ProtectRoute/ProtectAdminRoute";
 import ProtectedUserRoute from "./utils/ProtectRoute/ProtectUserRoute";
-// import PrivateRoute from "./utils/ProtectRoute";
 
 function AdminLayout() {
   return (
@@ -75,6 +74,7 @@ const router = createBrowserRouter(
         <Route index element={<ViewAdminShippments />} />
         <Route path="users" element={<ViewUsers />} />
       </Route>
+
       <Route
         path="/user"
         element={<ProtectedUserRoute outlet={<UserLayout />} />}

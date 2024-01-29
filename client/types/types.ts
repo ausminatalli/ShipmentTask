@@ -33,7 +33,7 @@ type Users = {
   mobilenumber: number;
 };
 
-type Shippments = {
+type Shipments = {
   shipment_id: number;
   waybill: string;
   customer_name: string;
@@ -42,4 +42,15 @@ type Shippments = {
   owner_id: number;
   status: string;
   shipment_image: string;
+};
+type Shipmentfitler = {
+  waybill: string;
+  customer_name: string;
+  customer_phone: string;
+  status: string;
+};
+
+type Userfilter = {
+  email: string;
+  mobilenumber: string;
 };

@@ -4,8 +4,8 @@ import { FormProvider, useForm } from "react-hook-form";
 import { TailSpin } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
 import InputField from "../Inputs/InputField";
-import apiClient from "../../Services/apiClient";
 import { useParams } from "react-router-dom";
+import { changePassword, checkResetToken } from "../../Services/apiQuery";
 
 export default function Reset() {
   const methods = useForm();
@@ -18,10 +18,9 @@ export default function Reset() {
   useEffect(() => {
     const checkToken = async () => {
       try {
-        const response = await apiClient.get(`/auth/checkToken/${emailToken}`);
+        const response = await checkResetToken(emailToken as string);
         if (response.statusText === "OK") setTokenStatus(response.data);
-      } catch (error) {
-      }
+      } catch (error) {}
     };
 
     checkToken();
@@ -34,10 +33,8 @@ export default function Reset() {
       return;
     }
     try {
-      const response = await apiClient.post(
-        `/auth/changepassword/${emailToken}`,
-        data
-      );
+      const response = await changePassword(emailToken as string,data);
+
       if (response.statusText === "OK") {
         navigate("/");
       }

@@ -1,15 +1,21 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
-import apiClient from "../../../Services/apiClient";
 import { toast } from "react-toastify";
 import ImageViewer from "../../Inputs/ImageViewer";
 import AddModel from "../../Model/Model";
+import { updateShipmentByID } from "../../../Services/apiQuery";
 interface DataGridFormProps {
   setRequests: any;
   requests: any;
 }
-let statusData = ["Pending", "In Transit", "Delivered", "Cancelled"];
+let statusData = [
+  "Pending",
+  "In Transit",
+  "Out for Delivery",
+  "Delivered",
+  "Cancelled",
+];
 
 const DataGridView: React.FC<DataGridFormProps> = ({
   setRequests,
@@ -91,6 +97,8 @@ const DataGridView: React.FC<DataGridFormProps> = ({
           ? "text-blue-600 font-bold"
           : "" || params.row.status === "In Transit"
           ? "text-yellow-600 font-bold"
+          : "" || params.row.status === "Out for Delivery"
+          ? "text-pink-600 font-bold"
           : "",
       type: "singleSelect",
       valueOptions: statusData,
@@ -142,7 +150,7 @@ const DataGridView: React.FC<DataGridFormProps> = ({
 
   const handleUpdate = async (id: number, data: any) => {
     try {
-      const updateData = await apiClient.put(`/shipment/${id}`, data);
+      const updateData = await updateShipmentByID(id, data);
       const isCancelAction = data.status === "Cancelled";
       if (updateData.statusText === "OK") {
         toast.success(

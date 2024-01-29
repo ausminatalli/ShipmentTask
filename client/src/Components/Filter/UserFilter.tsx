@@ -1,12 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-import axios from "axios";
-import SelectInput from "./Inputs/SelectInput";
 import Inputs from "./Inputs/Inputs";
 import Button from "./Inputs/Button";
-import apiClient from "../../Services/apiClient";
+import { filterUsers } from "../../Services/apiQuery";
 
 interface ShipmentFiltersProps {
   filterValue: (data: any) => void;
@@ -34,14 +32,13 @@ const UsersFilters: React.FC<ShipmentFiltersProps> = ({
 
   const handleReset = async () => {
     setForm(defaultForm);
-    const res = await apiClient.post("/user/filter", form);
+    const res = await filterUsers(form);
     resetValue(res.data);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const res = await apiClient.post("/user/filter", form);
+    const res = await filterUsers(form);
     filterValue(res.data);
   };
 

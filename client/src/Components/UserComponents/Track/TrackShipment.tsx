@@ -1,16 +1,16 @@
 import { toast } from "react-toastify";
-import apiClient from "../../../Services/apiClient";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { getShipmentByWaybill } from "../../../Services/apiQuery";
 
 interface TrackShipmentProps {
-  waybill: String;
+  waybill: string;
 }
 
 const TrackShipment: React.FC<TrackShipmentProps> = ({ waybill }) => {
   const [color, setColor] = useState(0);
-  const handleUpdate = async () => {
+  const handleUpdate = useCallback(async () => {
     try {
-      const response = await apiClient.get(`/shipment/waybill/${waybill}`);
+      const response = await getShipmentByWaybill(waybill);
       if (response.statusText === "OK") {
         if (response.data === null) {
           setColor(getStatusColor("0"));
@@ -21,7 +21,7 @@ const TrackShipment: React.FC<TrackShipmentProps> = ({ waybill }) => {
     } catch (error) {
       toast.error("Fetch Failed");
     }
-  };
+  }, [waybill]);
 
   const getStatusColor = (status: string) => {
     if (status === "Pending") {
@@ -38,7 +38,7 @@ const TrackShipment: React.FC<TrackShipmentProps> = ({ waybill }) => {
 
   useEffect(() => {
     handleUpdate();
-  }, [waybill]);
+  }, [waybill, handleUpdate]);
   return (
     <div>
       {color === 0 ? (

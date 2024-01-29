@@ -4,10 +4,9 @@ const dotenv = require("dotenv");
 dotenv.config({ path: ".env.example" });
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  debug: true,
+  host: "smtp.office365.com",
+  port: 587,
+  secure: false,
   auth: {
     user: process.env.NOREPLY_EMAIL,
     pass: process.env.NOREPLY_Password,

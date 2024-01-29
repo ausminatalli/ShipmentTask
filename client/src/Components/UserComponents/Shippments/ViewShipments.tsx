@@ -1,27 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import DataGridView from "../../DataGrid/user/DataGridView";
-import apiClient from "../../../Services/apiClient";
 import AddModel from "../../Model/Model";
 import AddShipments from "./AddShipment";
-
-import ShipmentFilters from "../../Filter/ShipmentFilter";
 import useAuth from "../../../Hooks/useAuth";
+import UserShipmentFilters from "../../Filter/UserShipmentFilter";
+import { getShipmentsByOwnerID } from "../../../Services/apiQuery";
+import { toast } from "react-toastify";
 
 export default function ViewShippments() {
   const { authData } = useAuth();
-  const [requests, setRequests] = useState<[Shippments] | []>([]);
+  const [requests, setRequests] = useState<[Shipments] | []>([]);
   const [openModel, setOpenModel] = useState(false);
-  const getRequests = async () => {
+  const getRequests = useCallback(async () => {
     try {
-      const ownerid = authData?.id;
-      const res = await apiClient.get(`/shipment/${ownerid}`);
+      const ownerID = authData?.id;
+      const res = await getShipmentsByOwnerID(ownerID as string);
       if (res.statusText === "OK") {
         setRequests(res.data);
       }
-    } catch (err) {}
-  };
+    } catch (err) {
+      toast.error("Failed to fetch Shipments");
+    }
+  }, [authData]);
   const filters = (data: any) => {
     setRequests(data);
   };
@@ -33,7 +35,7 @@ export default function ViewShippments() {
     if (authData) {
       getRequests();
     }
-  }, [authData]);
+  }, [authData, getRequests]);
 
   return (
     <>
@@ -51,7 +53,7 @@ export default function ViewShippments() {
             </button>
           </div>
         </div>
-        <ShipmentFilters filterValue={filters} resetValue={reset} />
+        <UserShipmentFilters filterValue={filters} resetValue={reset} />
       </div>
 
       <div className="w-12/12 m-auto border-2 shadow-md shadow-gray-300 rounded overflow-x-auto mt-10 w-4/5">

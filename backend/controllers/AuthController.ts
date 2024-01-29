@@ -67,9 +67,9 @@ export const login = async (
       maxAge: 2 * 24 * 60 * 60 * 1000, // 7 days
     });
 
-    res.status(200).json({ existingEmail, message: "Login Success" });
+    return res.status(200).json({ existingEmail, message: "Login Success" });
   } catch (error) {
-    next(res.status(500).json({ message: `Failed to Login,${error}` }));
+    return next(res.status(500).json({ message: `Failed to Login,${error}` }));
   }
 };
 
@@ -90,12 +90,12 @@ export const Register = async (
       !dateofbirth ||
       !mobilenumber
     ) {
-      res.status(404).json({ message: `Missing fields` });
+      return res.status(404).json({ message: `Missing fields` });
     }
     const existingEmail = await Users.findOne({ where: { email: email } });
 
-    if (existingEmail) {
-      res.status(401).json({ message: `Email Already registered` });
+    if (existingEmail?.email) {
+      return res.status(401).json({ message: `Email Already registered` });
     }
     const user = await Users.create({
       fname,
@@ -107,9 +107,9 @@ export const Register = async (
       emailToken: generateEmailToken(),
     });
 
-    res.status(200).json(user);
+    return res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ message: `${error}` });
+    return res.status(500).json({ message: `${error}` });
   }
 };
 
@@ -126,16 +126,15 @@ export const logout = (req: Request, res: Response, next: NextFunction) => {
     secure: true,
   });
 
-  res.status(200).json({ message: "Logout Success" });
+  return res.status(200).json({ message: "Logout Success" });
 };
 
-export const getUserInfoFromToken = (req: Request, res: Response): void => {
+export const getUserInfoFromToken = (req: Request, res: Response) => {
   try {
     const refreshToken = req.cookies.refresh_token;
 
     if (!refreshToken) {
-      res.status(401).json({ error: "Refresh token not found" });
-      return;
+      return res.status(401).json({ error: "Refresh token not found" });
     }
 
     // Decode the refreshToken to get user data
@@ -152,14 +151,15 @@ export const getUserInfoFromToken = (req: Request, res: Response): void => {
       id: decodedData.id,
     };
 
-    res.status(200).json(response);
+    return res.status(200).json(response);
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 
 export const Verify = async (req: Request, res: Response) => {
   try {
+    const Client_url = process.env.Client_url as string;
     const emailToken = req.params.emailToken;
     if (!emailToken) {
       res.status(404).json({ message: `Link Not supported` });
@@ -172,13 +172,13 @@ export const Verify = async (req: Request, res: Response) => {
           { isVerified: true, emailToken: "" },
           { where: { user_id: findUser.user_id } }
         );
-        return res.redirect("http://localhost:3000");
+        return res.redirect(Client_url);
       }
     } else {
       return res.status(404).json({ message: "Link Not supported" });
     }
   } catch (err) {
-    res.status(500).json({ error: "Failed to verify user" });
+    return res.status(500).json({ error: "Failed to verify user" });
   }
 };
 
@@ -210,17 +210,17 @@ export const CheckResetToken = async (req: Request, res: Response) => {
   try {
     const emailToken = req.params.emailToken;
     if (!emailToken) {
-      res.status(404).json({ message: `Link Not supported` });
+      return res.status(404).json({ message: `Link Not supported` });
     }
     const findUser = await Users.findOne({ where: { emailToken: emailToken } });
 
     if (findUser) {
-      res.status(200).json(findUser);
+      return res.status(200).json(findUser);
     } else {
-      res.status(404).json({ message: "Token expired" });
+      return res.status(404).json({ message: "Token expired" });
     }
   } catch (err) {
-    res.status(500).json({ error: "Failed to verify user" });
+    return res.status(500).json({ error: "Failed to verify user" });
   }
 };
 
@@ -229,18 +229,18 @@ export const ResetPassword = async (req: Request, res: Response) => {
     const emailToken = req.params.emailToken;
     const { password } = req.body;
     if (!emailToken) {
-      res.status(404).json({ message: `Link Not supported` });
+      return res.status(404).json({ message: `Link Not supported` });
     }
     const findUser = await Users.findOne({ where: { emailToken: emailToken } });
     if (findUser) {
       findUser.password = await bcrypt.hash(password, 10);
       findUser.emailToken = "";
       findUser.save();
-      res.status(200).json(findUser);
+      return res.status(200).json(findUser);
     } else {
-      res.status(404).json({ message: "Token expired" });
+      return res.status(404).json({ message: "Token expired" });
     }
   } catch (err) {
-    res.status(500).json({ error: "Failed to verify user" });
+    return res.status(500).json({ error: "Failed to verify user" });
   }
 };

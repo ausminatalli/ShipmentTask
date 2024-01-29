@@ -8,9 +8,9 @@ export const getAllShipments = async (
 ) => {
   try {
     const shipments = await Shipments.findAll();
-    res.status(200).json(shipments);
+    return res.status(200).json(shipments);
   } catch (err) {
-    res.status(500).json({ error: "Failed to fetch Shipments" });
+    return res.status(500).json({ error: "Failed to fetch Shipments" });
   }
 };
 
@@ -23,9 +23,9 @@ export const getUserShipments = async (
     const owner_id = req.params.ownerid;
     const users = await Shipments.findAll({ where: { owner_id: owner_id } });
 
-    res.status(200).json(users);
+    return res.status(200).json(users);
   } catch (err) {
-    res.status(500).json({ error: "Failed to fetch Shipments" });
+    return res.status(500).json({ error: "Failed to fetch Shipments" });
   }
 };
 
@@ -37,9 +37,9 @@ export const getShipmentByWaybill = async (
   try {
     const waybill = req.params.waybill;
     const users = await Shipments.findOne({ where: { waybill: waybill } });
-    res.status(200).json(users);
+    return res.status(200).json(users);
   } catch (err) {
-    res.status(500).json({ error: "Failed to fetch Shipments" });
+    return res.status(500).json({ error: "Failed to fetch Shipments" });
   }
 };
 
@@ -54,15 +54,13 @@ export const updateShipmenyByOwnerID = async (
     const [updatedRowsCount] = await Shipments.update(data, {
       where: { owner_id: owner_id },
     });
-    console.log(updatedRowsCount);
 
     if (updatedRowsCount === 0) {
       return res.status(404).json({ message: "Shipment's User not found" });
     }
     res.status(200).json({ message: "Shipment Updated" });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: "Failed to Update Shipments" });
+    return res.status(500).json({ error: "Failed to Update Shipments" });
   }
 };
 
@@ -82,9 +80,9 @@ export const updateShipmenyByID = async (
     if (updatedRowsCount === 0) {
       return res.status(404).json({ message: "Shipment not found" });
     }
-    res.status(200).json({ message: "Shipment Updated" });
+    return res.status(200).json({ message: "Shipment Updated" });
   } catch (err) {
-    res.status(500).json({ error: "Failed to Update Shipments" });
+    return res.status(500).json({ error: "Failed to Update Shipments" });
   }
 };
 
@@ -103,7 +101,7 @@ export const addShimpent = async (
     } = req.body;
 
     if (!customer_name || !customer_address || !customer_phone || !owner_id) {
-      res.status(401).json({ message: `Missing fields` });
+      return res.status(401).json({ message: `Missing fields` });
     }
     const waybill = generateWaybill();
     const addShipment = await Shipments.create({
@@ -115,9 +113,9 @@ export const addShimpent = async (
       waybill,
     });
 
-    res.status(200).json(addShipment);
+    return res.status(200).json(addShipment);
   } catch (error) {
-    res.status(500).json({ error: `Failed to add Shipment ${error}` });
+    return res.status(500).json({ error: `Failed to add Shipment ${error}` });
   }
 };
 
@@ -148,8 +146,43 @@ export const filterShipments = async (
     const filteredData = await Shipments.findAll({
       where: whereClause,
     });
-    res.status(200).json(filteredData);
+    return res.status(200).json(filteredData);
   } catch (error) {
-    res.status(500).json({ message: "Something went wrong" });
+    return res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+export const filterShipmentsByUserID = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const ownerID = req.params.ownerID;
+
+  const data = await req.body;
+  try {
+    const whereClause: any = {};
+    if (data.customer_name) {
+      whereClause.customer_name = data.customer_name.trim();
+    }
+
+    if (data.customer_phone) {
+      whereClause.customer_phone = data.customer_phone;
+    }
+    if (data.waybill) {
+      whereClause.waybill = data.waybill;
+    }
+
+    if (data.status) {
+      whereClause.status = data.status;
+    }
+    whereClause.owner_id = ownerID;
+
+    const filteredData = await Shipments.findAll({
+      where: whereClause,
+    });
+    return res.status(200).json(filteredData);
+  } catch (error) {
+    return res.status(500).json({ message: "Something went wrong" });
   }
 };

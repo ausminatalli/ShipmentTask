@@ -12,15 +12,17 @@ export const VerifyPassword = async (
 ) => {
   try {
     const { fname, lname, email, emailToken } = req.body;
+    const Server_url = process.env.Server_url;
+
     if (!fname || !lname || !email || !emailToken) {
       res.status(404).json({ message: `Missing fields` });
     }
     const name = fname + " " + lname;
-    const link = `http://localhost:8000/auth/verify/${emailToken}`;
+    const link = `${Server_url}/auth/verify/${emailToken}`;
     await sendEmail(email, "Verify Account", VerifyAccountTemplate(name, link));
-    res.status(200).json({ message: "Verify Email sent" });
+    return res.status(200).json({ message: "Verify Email sent" });
   } catch (err) {
-    res.status(500).json({ error: "Failed to verify user" });
+    return res.status(500).json({ error: "Failed to verify user" });
   }
 };
 
@@ -31,19 +33,21 @@ export const ResetPassword = async (
 ) => {
   try {
     const { fname, lname, email, emailToken } = req.body;
+    const Client_url = process.env.Client_url;
+
     if (!fname || !lname || !email || !emailToken) {
-      res.status(404).json({ message: `Missing fields` });
+      return res.status(404).json({ message: `Missing fields` });
     }
     const name = fname + " " + lname;
-    const link = `http://localhost:3000/reset/${emailToken}`;
+    const link = `${Client_url}/reset/${emailToken}`;
     await sendEmail(
       email,
       "Reset password",
       ForgotPasswordTemplate(name, link)
     );
-    res.status(200).json({ message: "Reset Email sent" });
+    return res.status(200).json({ message: "Reset Email sent" });
   } catch (err) {
-    res.status(500).json({ error: "Failed to reset user" });
+    return res.status(500).json({ error: "Failed to reset user" });
   }
 };
 
@@ -60,7 +64,7 @@ export const Waybill = async (
     const findUser = await Users.findOne({ where: { user_id: owner_id } });
 
     if (!findUser) {
-      res.status(404).json({ message: `User not found` });
+      return res.status(404).json({ message: `User not found` });
     }
     const name = findUser?.fname + " " + findUser?.lname;
     const email = findUser?.email;
@@ -69,8 +73,8 @@ export const Waybill = async (
       "Waybill Reciept",
       WaybillTemplate(name, waybill)
     );
-    res.status(200).json({ message: "Waybill Email sent" });
+    return res.status(200).json({ message: "Waybill Email sent" });
   } catch (err) {
-    res.status(500).json({ error: "Failed to send waybill" });
+    return res.status(500).json({ error: "Failed to send waybill" });
   }
 };

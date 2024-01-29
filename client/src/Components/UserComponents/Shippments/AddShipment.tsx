@@ -4,9 +4,9 @@ import { useState } from "react";
 import InputField from "../../Inputs/InputField";
 import ImageUploader from "../Upload/ImageUploader";
 import SubmitBtn from "../../Inputs/SubmitBtn";
-import apiClient from "../../../Services/apiClient";
 import useAuth from "../../../Hooks/useAuth";
 import { toast } from "react-toastify";
+import { createShipment, sendWaybillRequest } from "../../../Services/apiQuery";
 
 interface AddShipmentsProps {
   setRequests: any;
@@ -33,17 +33,15 @@ const AddShipments: React.FC<AddShipmentsProps> = ({
       return;
     }
     try {
-      const response = await apiClient.post("/shipment", {
-        ...data,
-        shipment_image: secureUrl,
-        owner_id: authData?.id,
-      });
+      const response = await createShipment(
+        data,
+        secureUrl as string,
+        authData
+      );
+
       if (response.statusText === "OK") {
         setRequests([...requests, response.data]);
-        const sendWaybill = await apiClient.post(
-          "/request/waybill",
-          response.data
-        );
+        const sendWaybill = await sendWaybillRequest(response.data);
         if (sendWaybill.statusText === "OK") {
           toast.success("Waybill sent to email");
         }

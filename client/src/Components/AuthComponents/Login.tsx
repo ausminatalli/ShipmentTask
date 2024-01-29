@@ -4,7 +4,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { TailSpin } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
 import InputField from "../Inputs/InputField";
-import apiClient from "../../Services/apiClient";
+import { login } from "../../Services/apiQuery";
 
 export default function Login() {
   const methods = useForm();
@@ -14,7 +14,7 @@ export default function Login() {
   const onSubmit = methods.handleSubmit(async (data) => {
     setisLoading(true);
     try {
-      const response = await apiClient.post("/auth/login", data);
+      const response = await login(data);
       if (response.statusText === "OK") {
         if (response.data.existingEmail.isAdmin === true) {
           navigate("/admin");

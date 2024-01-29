@@ -1,20 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import apiClient from "../../Services/apiClient";
 import DataGridAdminView from "../DataGrid/admin/DataGridAdminView";
 import ShipmentFilters from "../Filter/ShipmentFilter";
+import { getShipments } from "../../Services/apiQuery";
+import { toast } from "react-toastify";
 
-export default function ViewAdminShippments() {
-  const [requests, setRequests] = useState<[Shippments] | []>([]);
+export default function ViewShipments() {
+  const [requests, setRequests] = useState<[Shipments] | []>([]);
 
   const getRequests = async () => {
     try {
-      const res = await apiClient.get("/shipment");
+      const res = await getShipments();
       if (res.statusText === "OK") {
         setRequests(res.data);
       }
-    } catch (err) {}
+    } catch (err) {
+      toast.error("Shipment data fetch Failed");
+    }
   };
 
   const filters = (data: any) => {

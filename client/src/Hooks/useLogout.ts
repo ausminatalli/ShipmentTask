@@ -1,17 +1,17 @@
 import { useNavigate } from "react-router-dom";
-import apiClient from "../Services/apiClient";
+import { loggingOut } from "../Services/apiQuery";
 
 const useLogout = () => {
   const navigate = useNavigate();
 
   const logout = async () => {
     try {
-      const response = await apiClient.get("/auth/logout");
+      const response = await loggingOut();
       if (response.statusText === "OK") {
         navigate("/");
       }
     } catch (error) {
-      // throw error;
+      throw error;
     }
   };
 

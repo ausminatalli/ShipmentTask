@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import SelectInput from "./Inputs/SelectInput";
 import Inputs from "./Inputs/Inputs";
 import Button from "./Inputs/Button";
-import apiClient from "../../Services/apiClient";
 import useAuth from "../../Hooks/useAuth";
+import { filterShipmentsByUserID } from "../../Services/apiQuery";
 
 interface ShipmentFiltersProps {
   filterValue: (data: any) => void;
@@ -25,15 +25,16 @@ let statusData = [
   { status: "In Transit", status_id: "In Transit" },
   { status: "Out for Delivery", status_id: "Out for Delivery" },
   { status: "Delivered", status_id: "Delivered" },
+  { status: "Cancelled", status_id: "Cancelled" },
 ];
 
-const ShipmentFilters: React.FC<ShipmentFiltersProps> = ({
+const UserShipmentFilters: React.FC<ShipmentFiltersProps> = ({
   filterValue,
   resetValue,
 }) => {
   const [reset, setReset] = useState(false);
   const [form, setForm] = useState(defaultForm);
-  const { authData, loading } = useAuth();
+  const { authData } = useAuth();
 
   const handleInputChange = (event: any) => {
     const { name, value } = event.target;
@@ -42,12 +43,12 @@ const ShipmentFilters: React.FC<ShipmentFiltersProps> = ({
       ...prevState,
       [name]: value,
     }));
-    };
-    
+  };
 
   const handleReset = async () => {
+    const ownerID = authData?.id;
     setForm(defaultForm);
-    const res = await apiClient.post("/shipment/filter", form);
+    const res = await filterShipmentsByUserID(ownerID as string, form);
     resetValue(res.data);
     setReset(true);
   };
@@ -59,8 +60,8 @@ const ShipmentFilters: React.FC<ShipmentFiltersProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const res = await apiClient.post("/shipment/filter", form);
+    const ownerID = authData?.id;
+    const res = await filterShipmentsByUserID(ownerID as string, form);
     filterValue(res.data);
   };
 
@@ -108,4 +109,4 @@ const ShipmentFilters: React.FC<ShipmentFiltersProps> = ({
   );
 };
 
-export default ShipmentFilters;
+export default UserShipmentFilters;

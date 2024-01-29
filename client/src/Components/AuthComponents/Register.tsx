@@ -4,7 +4,7 @@ import InputField from "../Inputs/InputField";
 import { useForm, FormProvider } from "react-hook-form";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import apiClient from "../../Services/apiClient";
+import { register, verifySentData } from "../../Services/apiQuery";
 
 export default function Register() {
   const methods = useForm();
@@ -19,13 +19,11 @@ export default function Register() {
       return;
     }
     try {
-      const response = await apiClient.post("/auth/register", data);
+      const response = await register(data);
       if (response.statusText === "OK") {
-        const responseVerify = await apiClient.post(
-          "/request/verifySent",
-          response.data
-        );
-
+        const data = response.data;
+        const responseVerify = await verifySentData(data);
+        console.log(responseVerify);
         if (responseVerify.statusText === "OK") {
           navigate("/verification");
         }

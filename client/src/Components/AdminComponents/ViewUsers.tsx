@@ -1,20 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import apiClient from "../../Services/apiClient";
 import DataGridUserView from "../DataGrid/admin/DataGridUserView";
 import UsersFilters from "../Filter/UserFilter";
+import { getUsers } from "../../Services/apiQuery";
+import { toast } from "react-toastify";
 
 export default function ViewUsers() {
   const [requests, setRequests] = useState<[Users] | []>([]);
 
   const getRequests = async () => {
     try {
-      const res = await apiClient.get("/user");
+      const res = await getUsers();
       if (res.statusText === "OK") {
         setRequests(res.data);
       }
-    } catch (err) {}
+    } catch (err) {
+      toast.error("User data fetch Failed");
+    }
   };
 
   const filters = (data: any) => {
