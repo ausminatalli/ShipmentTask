@@ -1,0 +1,90 @@
+{
+  "name": "hackathon-starter",
+  "version": "8.0.1",
+  "description": "A boilerplate for Node.js web applications",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sahat/hackathon-starter.git"
+  },
+  "license": "MIT",
+  "author": "Sahat Yalkabov",
+  "contributors": [
+    "Yashar Fakhari (https://github.com/YasharF)"
+  ],
+  "scripts": {
+    "postinstall": "patch-package && npm run scss",
+    "start": "nodemon app.ts",
+    "createDB": "npx sequelize-cli  db:create",
+    "dropDB": "npx sequelize-cli  db:drop",
+    "migrateDB": "npx sequelize-cli db:migrate",
+    "unmigrateDB": "npx sequelize-cli db:migrate:undo",
+    "test": "nyc mocha --timeout=60000 --exit",
+    "lint": "eslint \"**/*.ts\"",
+    "prepare": "if [ \"$NODE_ENV\" != \"production\" ]; then husky install; fi",
+    "scss": "sass --no-source-map --load-path=./ --update ./public/css:./public/css",
+    "lintStage": "node_modules/.bin/lint-staged"
+  },
+  "lint-staged": {
+    "*.js": [
+      "npm run lint -- --fix"
+    ]
+  },
+  "pre-commit": "lint-staged",
+  "dependencies": {
+    "@octokit/rest": "^20.0.2",
+    "axios": "^1.5.1",
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "errorhandler": "^1.5.1",
+    "express": "^4.18.2",
+    "express-flash": "^0.0.2",
+    "express-rate-limit": "^7.1.1",
+    "express-session": "^1.17.3",
+    "from": "^0.1.7",
+    "import": "^0.0.6",
+    "jsonwebtoken": "^9.0.2",
+    "lastfm": "^0.9.4",
+    "lodash": "^4.17.21",
+    "lusca": "^1.7.0",
+    "mailchecker": "^5.0.9",
+    "moment": "^2.29.4",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.8.0",
+    "nodemailer": "^6.9.8",
+    "patch-package": "^8.0.0",
+    "sequelize": "^6.35.2",
+    "validator": "^13.11.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.6",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/node": "^20.11.6",
+    "@types/nodemailer": "^6.4.14",
+    "chai": "^4.3.10",
+    "eslint": "^8.51.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-chai-friendly": "^0.7.2",
+    "eslint-plugin-import": "^2.28.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.0.1",
+    "mocha": "^10.2.0",
+    "mongodb-memory-server": "^9.0.1",
+    "nyc": "^15.1.0",
+    "sinon": "^16.1.0",
+    "supertest": "^6.3.3",
+    "typescript": "^5.3.3"
+  },
+  "config": {
+    "mongodbMemoryServer": {
+      "version": "6.0.6"
+    }
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
