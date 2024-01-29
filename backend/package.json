@@ -18,7 +18,6 @@
     "migrateDB": "npx sequelize-cli db:migrate",
     "unmigrateDB": "npx sequelize-cli db:migrate:undo",
     "lint": "eslint \"**/*.ts\"",
-    "prepare": "if [ \"$NODE_ENV\" != \"production\" ]; then husky install; fi",
     "lintStage": "node_modules/.bin/lint-staged"
   },
   "lint-staged": {
